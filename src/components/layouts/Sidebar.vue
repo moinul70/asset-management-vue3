@@ -54,11 +54,32 @@ const toggleMenu = (menuName) => {
                       <p>Dashboard v1</p>
                     </a>
                   </li>
-                  <li class="nav-item">
-                    <a href="../index2.html" class="nav-link">
+                  <li class="nav-item" :class="{ 'menu-open': menuOpen.level2 }">
+                    <a href="#" class="nav-link" @click.prevent="toggleMenu('level2')">
                       <i class="nav-icon bi bi-circle"></i>
                       <p>Dashboard v2</p>
+                      <i class="nav-arrow bi bi-chevron-right"></i>
                     </a>
+                    <ul class="nav nav-treeview">
+                      <li class="nav-item">
+                        <a href="#" class="nav-link">
+                          <i class="nav-icon bi bi-record-circle-fill"></i>
+                          <p>Level 3</p>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a href="#" class="nav-link">
+                          <i class="nav-icon bi bi-record-circle-fill"></i>
+                          <p>Level 3</p>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a href="#" class="nav-link">
+                          <i class="nav-icon bi bi-record-circle-fill"></i>
+                          <p>Level 3</p>
+                        </a>
+                      </li>
+                    </ul>
                   </li>
                   <li class="nav-item">
                     <a href="../index3.html" class="nav-link">

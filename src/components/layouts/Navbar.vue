@@ -1,12 +1,12 @@
 <script setup>
-import { auth } from '../../auth'
+ import { useAuthStore } from '../../auth'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-
+const auth = useAuthStore()
 const handleLogout = () => {
   auth.logout()
-  router.push('/login')
+  router.push('/')
 }
 
 const toggleSidebar = () => {
@@ -202,7 +202,7 @@ const toggleSidebar = () => {
                 <!--begin::Menu Footer-->
                 <li class="user-footer">
                   <a href="#" class="btn btn-default btn-flat">Profile</a>
-                  <a href="#" class="btn btn-default btn-flat float-end">Sign out</a>
+                  <a href="#" @click.prevent="handleLogout()" class="btn btn-default btn-flat float-end">Sign out</a>
                 </li>
                 <!--end::Menu Footer-->
               </ul>

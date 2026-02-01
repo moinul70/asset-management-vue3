@@ -1,18 +1,19 @@
 <script setup>
 import { ref } from 'vue'
-import { auth } from '../../auth'
+ import { useAuthStore } from '../../auth'
 import { useRouter } from 'vue-router'
 
 // Define reactive state for form fields
 const email = ref('')
 const password = ref('')
 const router =useRouter()
+const auth=useAuthStore()
 
 const handleLogin = () => {
   // Logic for form submission
   console.log("Logging in with:", email.value, password.value)
   //alert(`Attempting login for: ${email.value}`)
-   auth.login()      // Set global state to true
+   auth.login()    // Set global state to true
    router.push('/dashboard') // Redirect
 }
 
@@ -25,10 +26,10 @@ const handleLogin = () => {
       <div class="card card-outline card-primary">
         <div class="card-header">
           <a
-            href="../index2.html"
+            href="/"
             class="link-dark text-center link-offset-2 link-opacity-100 link-opacity-50-hover"
           >
-            <h1 class="mb-0"><b>Admin</b>LTE</h1>
+            <h1 class="mb-0"><b>Asset</b>Management</h1>
           </a>
         </div>
         <div class="card-body login-card-body">
