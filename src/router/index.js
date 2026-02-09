@@ -4,6 +4,9 @@ import DashboardView from '../components/views/DashboardView.vue'
 import Layout from '../components/layouts/Layout.vue'
 // import { auth } from '../auth'
 import { useAuthStore } from '../auth'
+import LayoutFront from '../components/layouts-frontend/Layout.vue'
+import FrontEndDashboardView from '../components/views/FrontEndDashboardView.vue'
+import Practice from '../components/layouts-frontend/practice.vue'
 
 const routes = [
 
@@ -14,11 +17,28 @@ const routes = [
 // }
   {
     path: '/',
+    name: '',
+    component: LayoutFront,
+    children: [
+      {
+        path: '',
+        name: 'dashboard-front',
+        component: FrontEndDashboardView
+      },
+      {
+        path: 'practice/:topic',
+        name: 'practice',
+        component: Practice
+      }
+    ]
+  },
+  {
+    path: '/admin',
     name: 'login',
     component: LoginView
   },
   {
-    path: '/dashboard',
+    path: '/admin/dashboard',
     component: Layout,
     meta: { requiresAuth: true },
     children: [
@@ -40,8 +60,8 @@ router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
 
   // 1. Redirect authenticated users away from public landing/login pages
-  if (authStore.isAuthenticated && (to.path === '/' || to.path === '/login')) {
-    return next('/dashboard');
+  if (authStore.isAuthenticated && (to.path === '/admin' || to.path === '/login')) {
+    return next('/admin/dashboard');
   }
 
   // 2. Protect private routes

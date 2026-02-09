@@ -17,7 +17,6 @@ export const useAuthStore = defineStore('auth', () => {
       // token.value = data.token
       // user.value = data.user
 
-      // ব্রাউজারে টোকেন সেভ করা
       // Simulating an API delay
 
       this.token = 'fake-token'; // Update state
