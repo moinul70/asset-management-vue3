@@ -6,7 +6,7 @@ const questions = ref([]); // Changed null to [] to prevent template errors
 const answers = ref([]);
 const error = ref(null);
 const loading = ref(false); // Added loading state
-const selectedAnswer = ref(null); // Needed for v-model
+const selectedAnswer = ref([]); // Needed for v-model
 const meta = ref([]); // Needed for v-model
 const isAnswerVisible = ref(false);
 const pagination = ref({
@@ -54,26 +54,26 @@ const fetchQuestions = async (url = "/questions") => {
 const nextQuestion = () => {
   if (pagination.value.next_page_url) {
     fetchQuestions(pagination.value.next_page_url);
-    selectedAnswer.value = null; // Reset selection for next question
+    selectedAnswer.value = []; // Reset selection for next question
   }
 };
 const lastQuestion = () => {
   if (pagination.value.last_page) {
     fetchQuestions(pagination.value.last_page);
-    selectedAnswer.value = null; // Reset selection for next question
+    selectedAnswer.value = []; // Reset selection for next question
   }
 };
 const firstQuestion = () => {
   if (pagination.value.first_page) {
     fetchQuestions(pagination.value.first_page);
-    selectedAnswer.value = null; // Reset selection for next question
+    selectedAnswer.value = []; // Reset selection for next question
   }
 };
 
 const prevQuestion = () => {
   if (pagination.value.prev_page_url) {
     fetchQuestions(pagination.value.prev_page_url);
-    selectedAnswer.value = null;
+    selectedAnswer.value = [];
   }
 };
 
@@ -115,9 +115,7 @@ onMounted(() => fetchQuestions());
                 <div v-else class="alert alert-success">
                   <strong>Correct Answer:</strong>
                   <span v-for="ans in answers" :key="ans.id">
-                    <span v-if="ans.is_correct === 1">
-                      {{ ans.letter }}. {{ ans.answer }}
-                    </span>
+                    <span v-if="ans.is_correct === 1"> &nbsp;{{ ans.letter }} </span>
                   </span>
 
                   <button
@@ -132,9 +130,9 @@ onMounted(() => fetchQuestions());
               <div v-for="answer in answers" :key="answer.id" class="form-check mb-2">
                 <input
                   class="form-check-input"
-                  type="radio"
+                  :type="questions[0].correct_count > 1 ? 'checkbox' : 'radio'"
                   name="answer"
-                  :id="answer.letter"
+                  :id="answer.id"
                   :value="answer.letter"
                   v-model="selectedAnswer"
                 />
@@ -149,16 +147,22 @@ onMounted(() => fetchQuestions());
           <!-- Footer Navigation -->
           <div class="card-footer d-flex justify-content-between align-items-center">
             <button
-              class="btn btn-outline-warning align-item-first"
+              class="btn btn-outline-warning"
               :disabled="!pagination.first_page || loading"
-              @click="firstQuestion, (isAnswerVisible = false)"
+              @click="
+                firstQuestion();
+                isAnswerVisible = false;
+              "
             >
               First
             </button>
             <button
               class="btn btn-outline-secondary"
               :disabled="!pagination.prev_page_url || loading"
-              @click="prevQuestion, (isAnswerVisible = false)"
+              @click="
+                prevQuestion();
+                isAnswerVisible = false;
+              "
             >
               Previous
             </button>
@@ -166,14 +170,20 @@ onMounted(() => fetchQuestions());
             <button
               class="btn btn-primary"
               :disabled="!pagination.next_page_url || loading"
-              @click="nextQuestion, (isAnswerVisible = false)"
+              @click="
+                nextQuestion();
+                isAnswerVisible = false;
+              "
             >
               Next
             </button>
             <button
-              class="btn btn-secondary align-item-end"
+              class="btn btn-secondary"
               :disabled="!pagination.last_page || loading"
-              @click="lastQuestion, (isAnswerVisible = false)"
+              @click="
+                lastQuestion();
+                isAnswerVisible = false;
+              "
             >
               Last
             </button>
