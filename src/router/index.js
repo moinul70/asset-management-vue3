@@ -7,14 +7,15 @@ import { useAuthStore } from '../auth'
 import LayoutFront from '../components/layouts-frontend/Layout.vue'
 import FrontEndDashboardView from '../components/views/FrontEndDashboardView.vue'
 import Practice from '../components/layouts-frontend/practice.vue'
+import Exam from '../components/layouts-frontend/exam.vue'
 
 const routes = [
 
-//   { 
-//   path: '/:pathMatch(.*)*', 
-//   name: 'NotFound', 
-//   component: NotFoundView 
-// }
+  //   { 
+  //   path: '/:pathMatch(.*)*', 
+  //   name: 'NotFound', 
+  //   component: NotFoundView 
+  // }
   {
     path: '/',
     name: '',
@@ -29,11 +30,17 @@ const routes = [
         path: 'practice/:topic',
         name: 'practice',
         component: Practice
+      },
+      {
+        path: 'exam/:topic',
+        name: 'exam',
+        meta: { requiresAuth: true },
+        component: Exam
       }
     ]
   },
   {
-    path: '/admin',
+    path: '/login',
     name: 'login',
     component: LoginView
   },
@@ -58,20 +65,19 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
-
-  // 1. Redirect authenticated users away from public landing/login pages
-  if (authStore.isAuthenticated && (to.path === '/admin' || to.path === '/login')) {
-    return next('/admin/dashboard');
+const isAuthenticated = authStore.isAuthenticated;
+  
+  // Check if the route requires authentication (e.g., using meta fields)
+  if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
+    // Store the intended path in local storage or a store (Vuex/Pinia)
+  
+    localStorage.setItem('intendedRoute', to.path);
+    
+    // Redirect to the login page
+    next({ name: 'login', query: { redirect: to.fullPath } }); // assuming you have a named 'login' route
+  } else {
+    next(); // Continue to the intended route
   }
-
-  // 2. Protect private routes
-  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    return next('/');
-  }
-
-  // 3. Fallback: Allow the navigation to proceed
-  // This covers your "to.fullPath == '/' && !isAuthenticated" case safely
-  next();
 });
 
 export default router

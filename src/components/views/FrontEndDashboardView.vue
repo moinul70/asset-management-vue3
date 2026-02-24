@@ -69,7 +69,8 @@ import { ref } from "vue";
 
             <div class="d-grid gap-2">
              <router-link class="btn btn-warning text-dark" :to="{ name: 'practice', params: { topic:'aws'  }}">Practice AWS</router-link> 
-              <a href="#" class="btn btn-outline-warning">Take AWS Exam</a>
+             <router-link class="btn btn-outline-warning text-dark" :to="{ name: 'exam', params: { topic:'aws'  }}">Take AWS Exam</router-link> 
+              
             </div>
           </div>
         </div>

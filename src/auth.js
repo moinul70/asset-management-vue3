@@ -7,25 +7,23 @@ import { useRouter } from 'vue-router'
 //   logout() { this.isAuthenticated = false }
 // })
 const router = useRouter()
+
 export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => !!token.value)
   const token = ref(localStorage.getItem('token') || null)
-  function login() {
+  function login(credentials) {
     try {
-      // const { data } = await axios.post('/api/login', credentials)
+       const { data } =  axios.post('/api/login', credentials)
 
-      // token.value = data.token
-      // user.value = data.user
+       token.value = data.token
+       user.value = data.user
 
-      // Simulating an API delay
+     
+ localStorage.setItem('token', token.value);
 
-      this.token = 'fake-token'; // Update state
-      localStorage.setItem('token', 'fake-token');
-
-
-      //axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`
+      axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`
     } catch (error) {
-      throw new Error("Login failed")
+      throw new Error("Login failed:", error)
     }
   }
   function logout() {
