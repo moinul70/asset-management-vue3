@@ -2,22 +2,18 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
 import api from './services/api'
-// export const auth = reactive({
-//   isAuthenticated: false,
-//   login() { this.isAuthenticated = true },
-//   logout() { this.isAuthenticated = false }
-// })
+
 const router = useRouter()
 
 export const useAuthStore = defineStore('auth', () => {
+  const user=ref(null)
   const isAuthenticated = computed(() => !!token.value)
   const token = ref(localStorage.getItem('token') || null)
   function register(userData) {
     try {
       const { data } = api.post('/register', userData)
 
-      user.value = data.user
-
+      return data
     } catch (error) {
       throw new Error("Register failed:", error)
     }
@@ -26,6 +22,7 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const { data } = await api.post('/login', credentials)
       token.value = data.token
+      user.value=data.user_name
 
       localStorage.setItem('token', token.value);
 
@@ -45,7 +42,7 @@ export const useAuthStore = defineStore('auth', () => {
       delete api.defaults.headers.common['Authorization']
     }
   }
-  return { token, isAuthenticated, login, logout }
+  return { token, isAuthenticated, login, logout, user }
 
   {
     persist: true
