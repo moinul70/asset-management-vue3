@@ -25,7 +25,7 @@ const toggleSidebar = () => {
   </ul>
 
   <!-- Right Side Profile Dropdown -->
-  <ul class="navbar-nav ms-auto">
+  <ul class="navbar-nav ms-auto" v-if="auth.isAuthenticated==true">
     <li class="nav-item dropdown">
       <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
         <img src="https://via.placeholder.com" class="rounded-circle me-2" alt="Profile">

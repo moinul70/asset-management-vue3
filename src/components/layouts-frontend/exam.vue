@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import api from "../../services/api";
+import { useRouter } from 'vue-router'
+
 
 const questions = ref([]); // Changed null to [] to prevent template errors
 const answers = ref([]);
@@ -15,9 +17,9 @@ const pagination = ref({
   next: null,
   prev: null,
 });
-
+const topic = useRouter().currentRoute.value.params.topic
 // Added 'url' parameter to handle pagination clicks
-const fetchQuestions = async (url = "/questions") => {
+const fetchQuestions = async (url = `/exam/questions/topic/${topic}`) => {
   loading.value = true;
   error.value = null;
 

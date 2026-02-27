@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
+import api from './services/api'
 // export const auth = reactive({
 //   isAuthenticated: false,
 //   login() { this.isAuthenticated = true },
@@ -11,32 +12,37 @@ const router = useRouter()
 export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => !!token.value)
   const token = ref(localStorage.getItem('token') || null)
-  function login(credentials) {
+  function register(userData) {
     try {
-       const { data } =  axios.post('/api/login', credentials)
+      const { data } = api.post('/register', userData)
 
-       token.value = data.token
-       user.value = data.user
+      user.value = data.user
 
-     
- localStorage.setItem('token', token.value);
-
-      axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`
     } catch (error) {
-      throw new Error("Login failed:", error)
+      throw new Error("Register failed:", error)
     }
   }
-  function logout() {
+  async function login(credentials) {
     try {
-      // token.value = null
-      // user.value = null
+      const { data } = await api.post('/login', credentials)
+      token.value = data.token
 
-      token.value = null
-      localStorage.removeItem('token')
-      // delete axios.defaults.headers.common['Authorization']
+      localStorage.setItem('token', token.value);
 
+      api.defaults.headers.common['Authorization'] = `Bearer ${data.token}`
+      return data
     } catch (error) {
-      throw new Error("Logout failed:", error)
+      throw error
+    }
+  }
+  async function logout() {
+    try {
+      await api.get('/logout')
+    } catch (error) {
+    } finally {
+      localStorage.removeItem('intendedRoute')
+      token.value = null
+      delete api.defaults.headers.common['Authorization']
     }
   }
   return { token, isAuthenticated, login, logout }
