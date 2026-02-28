@@ -8,6 +8,7 @@ import LayoutFront from '../components/layouts-frontend/Layout.vue'
 import FrontEndDashboardView from '../components/views/FrontEndDashboardView.vue'
 import Practice from '../components/layouts-frontend/practice.vue'
 import Exam from '../components/layouts-frontend/exam.vue'
+import PrepareExam from '../components/layouts-frontend/prepareExam.vue'
 
 const routes = [
 
@@ -30,6 +31,12 @@ const routes = [
         path: 'practice/:topic',
         name: 'practice',
         component: Practice
+      },
+      {
+        path: 'prepare-exam/:topic',
+        name: 'prepare-exam',
+        meta: { requiresAuth: true },
+        component: PrepareExam
       },
       {
         path: 'exam/:topic',

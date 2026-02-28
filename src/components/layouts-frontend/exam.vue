@@ -46,13 +46,39 @@ const fetchQuestions = async (url = `/exam/questions/topic/${topic}`) => {
       next_page_url: data.links.next,
       prev_page_url: data.links.prev,
     };
+
   } catch (err) {
     error.value = err.response?.data?.message || "Failed to load";
   } finally {
     loading.value = false;
   }
 };
+const saveAndnextQuestion = async () => {
+  if (!selectedAnswer.value || selectedAnswer.value.length === 0) {
+    alert("Please select an answer");
+    return;
+  }
+  // Convert to array if radio selected
+  const answerIds = Array.isArray(selectedAnswer.value)
+    ? selectedAnswer.value
+    : [selectedAnswer.value];
 
+  console.log("Sending answer_ids:", answerIds);
+
+  await api.post("/take-exam", {
+
+    topic_id: questions.value[0].topic_id,
+    question_id: questions.value[0].id,
+    answer_ids: answerIds,
+  });
+
+  // Reset
+  selectedAnswer.value = [];
+
+  if (pagination.value.next_page_url) {
+    fetchQuestions(pagination.value.next_page_url);
+  }
+};
 const nextQuestion = () => {
   if (pagination.value.next_page_url) {
     fetchQuestions(pagination.value.next_page_url);
@@ -87,9 +113,7 @@ onMounted(() => fetchQuestions());
       <div class="col-12 col-md-8">
         <div class="card shadow-sm">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <span class="fw-semibold"
-              >Question {{ meta.current_page }} of {{ meta.total }}</span
-            >
+            <span class="fw-semibold">Question {{ meta.current_page }} of {{ meta.total }}</span>
             <span class="badge bg-warning text-dark">Time Left: 01:45</span>
           </div>
 
@@ -103,17 +127,13 @@ onMounted(() => fetchQuestions());
 
             <!-- Options -->
             <form>
-              
+
 
               <div v-for="answer in answers" :key="answer.id" class="form-check mb-2">
-                <input
-                  class="form-check-input"
-                  :type="questions[0].correct_count > 1 ? 'checkbox' : 'radio'"
-                  name="answer"
-                  :id="answer.id"
-                  :value="answer.letter"
-                  v-model="selectedAnswer"
-                />
+                <input class="form-check-input"
+                  :checked="questions[0]?.prepareExamDetails[0]?.question_answers_id?.includes(answer.id)"
+                  :type="questions[0].correct_count > 1 ? 'checkbox' : 'radio'" name="answer" :id="answer.id"
+                  :value="answer.id" v-model="selectedAnswer" />
 
                 <label class="form-check-label" :for="answer.letter">
                   {{ answer.letter }}. {{ answer.answer }}
@@ -124,47 +144,39 @@ onMounted(() => fetchQuestions());
 
           <!-- Footer Navigation -->
           <div class="card-footer d-flex justify-content-between align-items-center">
-            <button
-              class="btn btn-outline-warning"
-              :disabled="!pagination.first_page || loading"
-              @click="
-                firstQuestion();
-                isAnswerVisible = false;
-              "
-            >
+            <button class="btn btn-outline-warning" :disabled="!pagination.first_page || loading" @click="
+              firstQuestion();
+            isAnswerVisible = false;
+            ">
               First
             </button>
-            <button
-              class="btn btn-outline-secondary"
-              :disabled="!pagination.prev_page_url || loading"
-              @click="
-                prevQuestion();
-                isAnswerVisible = false;
-              "
-            >
+            <button class="btn btn-outline-secondary" :disabled="!pagination.prev_page_url || loading" @click="
+              prevQuestion();
+            isAnswerVisible = false;
+            ">
               Previous
             </button>
 
-            <button
-              class="btn btn-primary"
-              :disabled="!pagination.next_page_url || loading"
-              @click="
-                nextQuestion();
-                isAnswerVisible = false;
-              "
-            >
+            <button class="btn btn-primary" :disabled="!pagination.next_page_url || loading" @click="
+              nextQuestion();
+            isAnswerVisible = false;
+            ">
               Next
             </button>
-            <button
-              class="btn btn-secondary"
-              :disabled="!pagination.last_page || loading"
-              @click="
-                lastQuestion();
-                isAnswerVisible = false;
-              "
-            >
+            <button class="btn btn-secondary" :disabled="!pagination.last_page || loading" @click="
+              lastQuestion();
+            isAnswerVisible = false;
+            ">
               Last
             </button>
+
+            <button class="btn btn-success" @click="
+              saveAndnextQuestion();
+            isAnswerVisible = false;
+            ">
+              {{ pagination.next_page_url ? 'Save & Next' : 'Save & Submit' }}
+            </button>
+
           </div>
         </div>
       </div>

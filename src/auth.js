@@ -36,9 +36,12 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       await api.get('/logout')
     } catch (error) {
+      throw error
     } finally {
-      localStorage.removeItem('intendedRoute')
       token.value = null
+      localStorage.removeItem('intendedRoute')
+      localStorage.removeItem('token')
+      localStorage.removeItem('user_name')
       delete api.defaults.headers.common['Authorization']
     }
   }
